@@ -25,16 +25,8 @@ function preload() {
 }
 
 function create() {
-    this.dodgerGameText = this.add.text(400, 300, 'SKIMBLE', 
-{
-    fontSize: '48px', 
-    fontWeight: 'bold',
-    fill: '#fff',
-    fontFamily: 'Micro',
-    fontWeight: 'bold'
-    
-})
-.setOrigin(0.5, 0.5);
+    this.dodgerGameText = this.add.text(400, 300, 'skimble', { fontSize: '48px', fontFamily: 'Micro', fill: '#fff' });
+    this.dodgerGameText.setOrigin(0.5, 0.5);
     
     this.startGameButton = this.add.image(400, 400, 'startButton')
     .setOrigin(0.5, 0.5)

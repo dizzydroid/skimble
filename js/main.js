@@ -52,7 +52,6 @@ function create() {
     .on('pointerdown', function() {
         if (this.backgroundMusic.isPlaying) {
             this.backgroundMusic.pause();
-            // You can also adjust the tint of the button to indicate it's off.
             this.musicButton.setTint(0x555555);
         } else {
             this.backgroundMusic.resume();
@@ -82,7 +81,7 @@ function create() {
 
     // Keep player within game boundaries
     this.player.body.setCollideWorldBounds(true);
-    //this.player.body.drag.x = 1000; // Adjust this value to your preference
+    //this.player.body.drag.x = 1000; 
 
 
     // Create a group to hold our falling objects
@@ -91,7 +90,7 @@ function create() {
     });
  
     function spawnObject() {
-        const x = Phaser.Math.Between(25, 775);  // Make sure this line is present
+        const x = Phaser.Math.Between(25, 775);  
         
         this.score += 1;
         this.scoreText.setText('Score: ' + this.score);
@@ -110,7 +109,7 @@ function create() {
     
     
 
-// ... inside your create function:
+
 
 this.physics.add.collider(this.player, this.fallingObjects, endGame, null, this);
 
@@ -223,7 +222,6 @@ function endGame() {
     } */
 
 
-    // ... rest of your code for endGame ...
 
     // Display Game Over text
     const gameOverText = this.add.text(400, 250, 'Game Over', { fontSize: '48px', fontFamily: 'Micro', fill: '#fff' });

@@ -25,6 +25,8 @@ function preload() {
     this.load.audio('bgMusic', 'assets/music/music.mp3');
     this.load.image('musicIcon', 'assets/img/music_ico.png');
     this.load.audio('gameOverSound', 'assets/music/gameover.mp3');
+    this.load.image('controlsButton', 'assets/img/ctrlsbtn.png');
+
 
 
 }
@@ -60,7 +62,7 @@ function create() {
     }, this);
 
     
-    this.startGameButton = this.add.image(400, 400, 'startButton')
+    this.startGameButton = this.add.image(290, 400, 'startButton')
     .setOrigin(0.5, 0.5)
     .setInteractive()
     .setScale(0.4)
@@ -68,16 +70,69 @@ function create() {
         this.startGameButton.visible = false;
         startGame.call(this);
     });
+    
+    this.controlsButton = this.add.image(490, 395, 'controlsButton') // Adjust the coordinates as necessary
+    .setOrigin(0.5, 0.5)
+    .setInteractive()
+    .setScale(0.35) // Adjust the scaling if necessary
+    .on('pointerdown', () => {
+        showControls.call(this);
+    });
+
+    function showControls() {
+        // Hide the main menu items
+        this.startGameButton.visible = false;
+        this.controlsButton.visible = false;
+        this.dodgerGameText.visible = false;
+    
+        // Adjust the y-coordinate for this.controlsText to make room for the ENTER information
+        this.controlsText = this.add.text(400, 250, 'Use LEFT and RIGHT arrows to move.', {
+            fontSize: '24px',
+            fontFamily: 'Micro',
+            fill: '#fff',
+            align: 'center'
+        }).setOrigin(0.5, 0.5);
+        
+        // Add the ENTER information
+        const enterKeyText = this.add.text(400, 300, 'ENTER: Start / Play Again', {
+            fontSize: '20px',
+            fontFamily: 'Micro',
+            fill: '#fff'
+        }).setOrigin(0.5, 0.5);
+    
+        // Adjust the y-coordinate for this.backButton so it appears below the controls information
+        this.backButton = this.add.text(400, 350, 'Back', {
+            fontSize: '32px',
+            fontFamily: 'Micro',
+            fill: '#f00',
+            fontStyle: 'bold'
+        }).setOrigin(0.5, 0.5).setInteractive();
+    
+        this.backButton.on('pointerdown', () => {
+            // Remove controls description and show the main menu again
+            this.controlsText.destroy();
+            enterKeyText.destroy(); // Destroy the ENTER information text
+            this.backButton.destroy();
+    
+            this.startGameButton.visible = true;
+            this.controlsButton.visible = true;
+            this.dodgerGameText.visible = true;
+        });
+    }
+    
+    
 
 
     // Initial setup will go here
     // Create the player's rectangle
-    this.player = this.add.rectangle(400, 570, 50, 30, 0x00ff00);
+    this.player = this.add.rectangle(400, 570, 50, 30, 0x65fc55);
     // Enable physics on the player
     this.physics.world.enable(this.player);
 
     // Enable arrow key inputs
     this.cursors = this.input.keyboard.createCursorKeys();
+    this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+
 
     // Keep player within game boundaries
     this.player.body.setCollideWorldBounds(true);
@@ -96,7 +151,7 @@ function create() {
         this.scoreText.setText('Score: ' + this.score);
     
         const size = Phaser.Math.Between(this.minBlockSize, this.maxBlockSize); 
-        const fallingObject = this.add.rectangle(x, -10, size, size, 0xff0000);
+        const fallingObject = this.add.rectangle(x, -10, size, size, 0xd8181a);
         this.physics.world.enable(fallingObject);
     
         fallingObject.body.setGravityY((300 + (Math.floor(this.score / 10) * 10)) * this.speedMultiplier);
@@ -161,16 +216,18 @@ function initGame() {
 }
 
 function startGame() {
+    this.gameState = 'playing';
     this.backgroundMusic.play();
 
     this.dodgerGameText.visible = false;
+    this.controlsButton.visible = false; // Hide the controls button
 
     // Start score increment
     this.scoreIncrementer = this.time.addEvent({
         delay: 1000, // every second
         callback: function() {
             this.score++;
-            this.scoreText.setText('Score: ' + this.score);
+            this.scoreText.setText('Score: ' + this.score); 
         },
         callbackScope: this,
         loop: true
@@ -186,13 +243,14 @@ function startGame() {
         duration: 1000,
         ease: 'Linear',
         onComplete: () => {
-            this.dodgerGameText.destroy();
+            this.dodgerGameText.visible = false;
         }
     });
 }
 
 
 function endGame() {
+    this.gameState = 'gameover';
     this.backgroundMusic.stop();
     this.sound.play('gameOverSound'); // Play the game over sound
 
@@ -224,28 +282,95 @@ function endGame() {
 
 
     // Display Game Over text
-    const gameOverText = this.add.text(400, 250, 'Game Over', { fontSize: '48px', fontFamily: 'Micro', fill: '#fff' });
-    gameOverText.setOrigin(0.5, 0.5);  // This will center the text
+    this.gameOverText = this.add.text(400, 250, 'Game Over', { fontSize: '48px', fontFamily: 'Micro', fill: '#fff' });
+    this.gameOverText.setOrigin(0.5, 0.5);  // This will center the text
 
     // Display the final score
-    const finalScoreText = this.add.text(400, 300, 'Score: ' + this.score, { fontSize: '32px', fontFamily: 'Micro', fill: '#fff' });
-    finalScoreText.setOrigin(0.5, 0.5);  // This will center the text
+    this.finalScoreText = this.add.text(400, 300, 'Score: ' + this.score, { fontSize: '32px', fontFamily: 'Micro', fill: '#fff' });
+    this.finalScoreText.setOrigin(0.5, 0.5);  // This will center the text
 
     this.playAgainButton = this.add.image(400, 500, 'playAgainButton')
     .setOrigin(0.5, 0.5)
     .setInteractive()
     .setScale(0.5)
-    .on('pointerdown', () => location.reload());
+    .on('pointerdown', resetGame, this);
 }
 
 }
+
+function resetGame() {
+    this.gameState = 'menu';
+    // Stop any running music or sounds
+    this.backgroundMusic.stop();
+
+    // Reset all the game variables and states
+    this.score = 0;
+    this.speedMultiplier = 1;
+    this.spawnDelay = 700;
+
+    // Destroy any remaining falling objects
+    this.fallingObjects.clear(true, true);
+
+    // Remove the game over text and final score text
+    if (this.gameOverText) {
+        this.gameOverText.destroy();
+        this.finalScoreText.destroy();
+    }
+
+    // Hide the "Play Again" button
+    this.playAgainButton.visible = false;
+
+    // Reset the player's position
+    this.player.x = 400;
+    this.player.y = 570;
+
+    // Make necessary UI elements visible again
+    this.startGameButton.visible = true;
+    this.controlsButton.visible = true;
+    this.dodgerGameText.visible = true;
+    this.dodgerGameText.setAlpha(1);
+    this.scoreText.visible = true;
+    this.scoreText.setText('Score: 0');
+
+    // Stop any running timers
+    if (this.scoreIncrementer) {
+        this.scoreIncrementer.remove(false); // The 'false' parameter ensures the event doesn't run one final time
+    }
+
+    // Add other timers here if you have them, in the same manner.
+
+    // Enable physics if it was paused
+    this.physics.resume();
+
+    this.time.removeAllEvents(); // Remove all existing timers
+}
+
+
+
 
 function update() {
-    if (this.cursors.left.isDown) {
-        this.player.body.setVelocityX(-200);  // Move to the left
-    } else if (this.cursors.right.isDown) {
-        this.player.body.setVelocityX(200);  // Move to the right
-    } else {
-        this.player.body.setVelocityX(0);  // Stay still if no arrow key is pressed
+    // Check for Enter key press regardless of game state
+    if (Phaser.Input.Keyboard.JustDown(this.enterKey)) {
+        console.log("Enter key pressed");
+
+        if (this.startGameButton.visible) {
+            console.log("Starting the game...");
+            this.startGameButton.emit('pointerdown');
+        }
+        if (this.playAgainButton && this.playAgainButton.visible) {
+            console.log("Playing again...");
+            this.playAgainButton.emit('pointerdown');
+        }
+    }
+
+    if (this.gameState === 'playing' || this.gameState === 'menu') {
+        if (this.cursors.left.isDown) {
+            this.player.body.setVelocityX(-200);  // Move to the left
+        } else if (this.cursors.right.isDown) {
+            this.player.body.setVelocityX(200);  // Move to the right
+        } else {
+            this.player.body.setVelocityX(0);  // Stay still if no arrow key is pressed
+        }
     }
 }
+

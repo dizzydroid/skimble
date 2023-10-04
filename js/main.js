@@ -26,12 +26,58 @@ function preload() {
     this.load.image('musicIcon', 'assets/img/music_ico.png');
     this.load.audio('gameOverSound', 'assets/music/gameover.mp3');
     this.load.image('controlsButton', 'assets/img/ctrlsbtn.png');
+    this.load.image('pauseButton', 'assets/img/pausebtn.png');
+    this.load.image('playButton', 'assets/img/playbtn.png');
 
 
 
 }
 
 function create() {
+    this.escKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+    
+this.pauseOverlay = this.add.rectangle(400, 300, 800, 600, 0x000000, 0.7);
+this.pauseOverlay.visible = false;
+this.pauseButton = this.add.image(690, 30, 'pauseButton')
+    .setOrigin(0.5, 0.5)
+    .setInteractive()
+    .setScale(0.2)
+    .setTint(0xFFFFFF)  // Ensure that the button is bright from the beginning
+    .on('pointerdown', function() {
+        if (this.gameState === 'playing') {
+            this.gameState = 'paused';
+            this.physics.pause();
+            this.time.timeScale = 0; 
+            this.backgroundMusic.pause();
+
+            this.pauseButton.setTexture('playButton').setTint(0xFFFFFF);  // Set to "Play" and ensure it's bright
+            
+            this.pauseOverlay.visible = true;
+            this.pauseText.visible = true;
+        
+        } else if (this.gameState === 'paused') {
+            this.gameState = 'playing';
+            this.physics.resume();
+            this.time.timeScale = 1; 
+            this.backgroundMusic.resume();
+            
+            this.pauseButton.setTexture('pauseButton').setTint(0xFFFFFF);  // Set to "Pause" and ensure it's bright
+            
+            this.pauseOverlay.visible = false;
+            this.pauseText.visible = false;
+        }
+    }, this);
+
+this.pauseText = this.add.text(400, 300, 'PAUSED', {
+    fontSize: '48px',
+    fontFamily: 'Micro',
+    fill: '#fff'
+}).setOrigin(0.5, 0.5);
+this.pauseText.visible = false;
+
+    this.mKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
+
+
     this.backgroundMusic = this.sound.add('bgMusic', { volume: 1, loop: true });
     this.backgroundMusic.setVolume(0.2);
 
@@ -99,9 +145,21 @@ function create() {
             fontFamily: 'Micro',
             fill: '#fff'
         }).setOrigin(0.5, 0.5);
-    
+
+        const pauseText = this.add.text(400, 350, 'ESC: Pause/Resume', {
+            fontSize: '20px',
+            fontFamily: 'Micro',
+            fill: '#fff'
+        }).setOrigin(0.5, 0.5);
+        
+        const musicText = this.add.text(400, 400, 'M: Toggle Music', {
+            fontSize: '20px',
+            fontFamily: 'Micro',
+            fill: '#fff'
+        }).setOrigin(0.5, 0.5);
+
         // Adjust the y-coordinate for this.backButton so it appears below the controls information
-        this.backButton = this.add.text(400, 350, 'Back', {
+        this.backButton = this.add.text(400, 450, 'Back', {
             fontSize: '32px',
             fontFamily: 'Micro',
             fill: '#f00',
@@ -112,6 +170,8 @@ function create() {
             // Remove controls description and show the main menu again
             this.controlsText.destroy();
             enterKeyText.destroy(); // Destroy the ENTER information text
+            musicText.destroy();
+            pauseText.destroy();
             this.backButton.destroy();
     
             this.startGameButton.visible = true;
@@ -349,6 +409,17 @@ function resetGame() {
 
 
 function update() {
+    if (Phaser.Input.Keyboard.JustDown(this.mKey)) {
+        if (this.backgroundMusic.isPlaying) {
+            this.backgroundMusic.pause();
+            this.musicButton.setTint(0x555555);
+        } else {
+            this.backgroundMusic.resume();
+            this.musicButton.clearTint();
+        }
+    }
+    
+
     // Check for Enter key press regardless of game state
     if (Phaser.Input.Keyboard.JustDown(this.enterKey)) {
         console.log("Enter key pressed");
@@ -372,5 +443,14 @@ function update() {
             this.player.body.setVelocityX(0);  // Stay still if no arrow key is pressed
         }
     }
+    if (Phaser.Input.Keyboard.JustDown(this.escKey)) {
+        if (this.gameState === 'playing') {
+            this.pauseButton.emit('pointerdown'); // Simulate a click on the pause button
+        } else if (this.gameState === 'paused') {
+            this.pauseButton.emit('pointerdown'); // Simulate a click on the pause button
+        }
+    }
+    
+    
 }
 

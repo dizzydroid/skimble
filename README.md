@@ -15,10 +15,10 @@ How long can you skimble?
 
 ______________________________________
 ### Known issues: 
-- Loading the game could take about 2-4 seconds, i'm working on optimizing that
-- the "𝚜𝚔𝚒𝚖𝚋𝚕𝚎" font sometimes doesn't render on first launch, i'm investigating that too.
+- ~~Loading the game could take about 2-4 seconds, i'm working on optimizing that~~
+- ~~the "𝚜𝚔𝚒𝚖𝚋𝚕𝚎" font sometimes doesn't render on first launch, i'm investigating that too.~~
+- ~~the game's resolution is a bit.. cranky.~~
 - the game is NOT optimized for mobile devices, and that's not currently planned either.
-- the game's resolution is a bit.. cranky. Least of my problems tbh
 - i have <b>not</b> set any conditions regarding the game's difficulty decay onwards, meaning it <i>will</i> get exponentially harder as you progress, addressing that is on my to-do, but for right now: (your skill issue is not my problem!)
 - [Report any other issues you encounter!](https://github.com/dizzydroid/skimble/issues)
 ___________________________________________________________

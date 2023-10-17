@@ -30,7 +30,7 @@ ___________________________________________________________
 - character and sprite customization
 - in-game economy (e.g. collecting coins in-game)
 - Leaderboard system
-- [Suggestions? We're all ears 👉️ ](https://github.com/dizzydroid/skimble/discussions)
+- [Suggestions? We're all ears! 👈 ](https://github.com/dizzydroid/skimble/discussions)
 
 > [!NOTE]
 <i>There is <b>no</b> ETA to any of those upcoming features or fixes, they completely depend on how often i'll work on this project.

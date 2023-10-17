@@ -32,7 +32,8 @@ ___________________________________________________________
 - Leaderboard system
 - [Suggestions? We're all ears 👉️ ](https://github.com/dizzydroid/skimble/discussions)
 
-<i>(p.s. there is <b>no</b> ETA to any of those upcoming features or fixes, they completely depend on how often i'll work on this project.)
+> [!NOTE]
+<i>There is <b>no</b> ETA to any of those upcoming features or fixes, they completely depend on how often i'll work on this project.
 ___________________________________________________________
 
 <div id="footer" align="center">
